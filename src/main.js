@@ -1,12 +1,23 @@
+/*
+ * @Description:
+ * @FilePath: \vue-cli-vant-starter\src\main.js
+ * @Version: 1.0
+ * @Autor: CuiGang
+ * @Date: 2020-05-11 15:04:33
+ * @LastEditors: CuiGang
+ * @LastEditTime: 2020-05-11 17:49:54
+ */
 import Vue from 'vue'
 import './plugins/axios'
 import 'amfe-flexible'
-import { Toast } from 'vant'
+
 import App from './App.vue'
 import router from './router'
 import store from './store'
 
-Vue.use(Toast)
+// Vant配置
+import "@/plugins/vant.js"
+
 
 Vue.config.productionTip = false
 

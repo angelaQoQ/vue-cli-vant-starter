@@ -1,16 +1,56 @@
+<!--
+ * @Description:
+ * @FilePath: \vue-cli-vant-starter\src\App.vue
+ * @Version: 1.0
+ * @Autor: CuiGang
+ * @Date: 2020-05-11 15:04:33
+ * @LastEditors: CuiGang
+ * @LastEditTime: 2020-05-11 16:27:59
+ -->
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <router-view />
+
+    <van-tabbar v-model="active" class="footer_icon" active-color="rgba(238, 55, 153, 1)" inactive-color="#000">
+      <van-tabbar-item replace to="/">
+        <van-icon name="home-o" />
+        <br />Books
+      </van-tabbar-item>
+      <van-tabbar-item replace to="/library">
+        <van-icon name="shop-o" />
+        <br />Library
+      </van-tabbar-item>
+      <van-tabbar-item replace to="/community">
+        <van-icon name="comment-o" />
+        <br />Community
+      </van-tabbar-item>
+      <van-tabbar-item replace to="/profile">
+        <van-icon name="manager-o" />
+        <br />Profile
+      </van-tabbar-item>
+    </van-tabbar>
   </div>
 </template>
+<script>
+import Vue from "vue";
+import { Tabbar, TabbarItem } from "vant";
 
+Vue.use(Tabbar);
+Vue.use(TabbarItem);
+
+export default {
+  data() {
+    return {
+      active: 0
+    };
+  }
+};
+</script>
 <style lang="less">
+
 #app {
-  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -26,5 +66,17 @@
       color: #42b983;
     }
   }
+}
+
+.footer_icon {
+  i::before {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+  }
+}
+.van-search__content{
+  background-color:rgba(0, 0, 0, 0.05)!important;
 }
 </style>

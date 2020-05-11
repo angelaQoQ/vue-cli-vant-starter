@@ -19,6 +19,7 @@ module.exports = {
       }
     }
   },
+
   devServer: {
     proxy: {
       '/api': {
@@ -27,5 +28,7 @@ module.exports = {
         changeOrigin: true
       }
     }
-  }
+  },
+
+  lintOnSave: false
 }
