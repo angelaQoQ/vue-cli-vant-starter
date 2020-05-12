@@ -5,13 +5,18 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-11 16:27:59
+ * @LastEditTime: 2020-05-11 19:58:14
  -->
 <template>
   <div id="app">
     <router-view />
 
-    <van-tabbar v-model="active" class="footer_icon" active-color="rgba(238, 55, 153, 1)" inactive-color="#000">
+    <van-tabbar
+      v-model="active"
+      class="footer_icon"
+      active-color="rgba(238, 55, 153, 1)"
+      inactive-color="#000"
+    >
       <van-tabbar-item replace to="/">
         <van-icon name="home-o" />
         <br />Books
@@ -29,12 +34,14 @@
         <br />Profile
       </van-tabbar-item>
     </van-tabbar>
+
+    <van-loading v-show="showLoadding" vertical color="rgba(249, 67, 165, 1)">Loading</van-loading>
   </div>
 </template>
 <script>
 import Vue from "vue";
+import { mapState } from 'vuex'
 import { Tabbar, TabbarItem } from "vant";
-
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
 
@@ -43,11 +50,13 @@ export default {
     return {
       active: 0
     };
+  },
+  computed: {
+    ...mapState(["showLoadding"])
   }
 };
 </script>
 <style lang="less">
-
 #app {
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
@@ -76,7 +85,7 @@ export default {
     font-size: 30px;
   }
 }
-.van-search__content{
-  background-color:rgba(0, 0, 0, 0.05)!important;
+.van-search__content {
+  background-color: rgba(0, 0, 0, 0.05) !important;
 }
 </style>

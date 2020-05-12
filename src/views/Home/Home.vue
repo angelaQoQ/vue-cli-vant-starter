@@ -5,30 +5,33 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:11:51
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-11 18:37:18
+ * @LastEditTime: 2020-05-12 13:43:55
  -->
 <template>
   <div class="home">
     <!-- 搜索 -->
-    <van-search
-      v-model="search"
-      @search="onSearch"
-      @cancel="onCancel"
-      show-action
-      placeholder="Search what you want"
-      background="rgba(244, 246, 248, 1)"
-      shape="round"
-    >
-      <template #action>
-        <div @click="onSearch" class="search_right">
-          <img
-            class="search_right_icon"
-            src="../../assets/images/icon/mipmap-hdpi/icon_task.png"
-            alt
-          />
-        </div>
-      </template>
-    </van-search>
+
+    <div class="search_right" @click="goSearchPage">
+      <van-search
+        v-model="search"
+        @search="onSearch"
+        @cancel="onCancel"
+        show-action
+        placeholder="Search what you want"
+        background="rgba(244, 246, 248, 1)"
+        shape="round"
+      >
+        <template #action>
+          <div>
+            <img
+              class="search_right_icon"
+              src="../../assets/images/icon/mipmap-hdpi/icon_task.png"
+              alt
+            />
+          </div>
+        </template>
+      </van-search>
+    </div>
 
     <!-- 主题内容 -->
     <div class="home_main">
@@ -43,7 +46,6 @@
       <div class="umlike">
         <book4 v-for="(item, index) in bookInfo" :key="index" :bookInfo="item"></book4>
       </div>
-
     </div>
   </div>
 </template>
@@ -165,6 +167,9 @@ export default {
     },
     onCancel() {
       console.log("search cancle");
+    },
+    goSearchPage() {
+      this.$router.push({ name: "search" });
     }
   }
 };
@@ -186,14 +191,13 @@ export default {
     background: rgba(255, 255, 255, 1);
     border-radius: 22px 22px 0 0;
     padding-top: 20px;
-    padding: 16px;
+    padding-left: 16px;
     min-height: 500px;
 
     .slide1 {
       /deep/ .van-tabs {
         padding-left: 0;
         padding-right: 0;
-        padding-top: 32px;
         .van-tabs__nav--card {
           margin: 0;
           border: none;
