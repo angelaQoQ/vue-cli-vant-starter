@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-11 19:58:14
+ * @LastEditTime: 2020-05-12 19:43:34
  -->
 <template>
   <div id="app">
@@ -16,6 +16,7 @@
       class="footer_icon"
       active-color="rgba(238, 55, 153, 1)"
       inactive-color="#000"
+      v-if="showGuid"
     >
       <van-tabbar-item replace to="/">
         <van-icon name="home-o" />
@@ -35,7 +36,7 @@
       </van-tabbar-item>
     </van-tabbar>
 
-    <van-loading v-show="showLoadding" vertical color="rgba(249, 67, 165, 1)">Loading</van-loading>
+    <!-- <van-loading v-show="showLoadding" vertical color="rgba(249, 67, 165, 1)">Loading</van-loading> -->
   </div>
 </template>
 <script>
@@ -52,7 +53,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["showLoadding"])
+    ...mapState(["showLoadding" , "showGuid"])
   }
 };
 </script>

@@ -5,10 +5,10 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 17:47:56
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-12 11:14:03
+ * @LastEditTime: 2020-05-12 14:56:32
  */
 import Vue from 'vue'
-import { Toast , Icon ,Search, Tab, Tabs,Grid, GridItem,Loading ,Pagination,Checkbox } from 'vant'
+import { Lazyload ,Swipe, SwipeItem, Toast , Icon ,Search, Tab, Tabs,Grid, GridItem,Loading ,Pagination,Checkbox } from 'vant'
 Vue.use(Toast)
 Vue.use(Icon );
 Vue.use(Search);
@@ -19,3 +19,6 @@ Vue.use(GridItem);
 Vue.use(Loading);
 Vue.use(Pagination);
 Vue.use(Checkbox);
+Vue.use(Swipe);
+Vue.use(SwipeItem);
+Vue.use(Lazyload);

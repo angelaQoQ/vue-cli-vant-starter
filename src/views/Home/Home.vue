@@ -5,12 +5,11 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:11:51
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-12 13:43:55
+ * @LastEditTime: 2020-05-12 15:14:36
  -->
 <template>
   <div class="home">
     <!-- 搜索 -->
-
     <div class="search_right" @click="goSearchPage">
       <van-search
         v-model="search"
@@ -35,6 +34,15 @@
 
     <!-- 主题内容 -->
     <div class="home_main">
+      <!-- 轮播 -->
+      <div class="loop">
+        <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+          <van-swipe-item v-for="(item,index) in bookInfo[0].items" :key="index">
+            <img v-lazy="item.bannerUrl" />
+          </van-swipe-item>
+        </van-swipe>
+      </div>
+
       <!-- slide1 -->
       <div class="slide1">
         <van-tabs type="card">
@@ -44,7 +52,7 @@
 
       <!-- 猜你喜欢 -->
       <div class="umlike">
-        <book4 v-for="(item, index) in bookInfo" :key="index" :bookInfo="item"></book4>
+        <book4 v-if="index!=0" v-for="(item, index) in bookInfo" :key="index" :bookInfo="item"></book4>
       </div>
     </div>
   </div>
@@ -162,6 +170,14 @@ export default {
     Book4
   },
   methods: {
+    async initData() {
+      let res = await this.axios.post("/hwyc/home/index");
+      console.log(res);
+      if (res.status == 0) {
+        this.bookInfo = res.data.pageColumns;
+        this.$forceUpdate();
+      }
+    },
     onSearch() {
       console.log("search");
     },
@@ -171,6 +187,9 @@ export default {
     goSearchPage() {
       this.$router.push({ name: "search" });
     }
+  },
+  created() {
+    this.initData();
   }
 };
 </script>
@@ -189,21 +208,39 @@ export default {
 
   .home_main {
     background: rgba(255, 255, 255, 1);
-    border-radius: 22px 22px 0 0;
+    border-radius: 22px 0 0 0;
     padding-top: 20px;
     padding-left: 16px;
     min-height: 500px;
+    .loop {
+      width: 100%;
+      height: 144px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      .van-swipe__track {
+        height: 100%;
+        .van-swipe-item {
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
 
     .slide1 {
       /deep/ .van-tabs {
         padding-left: 0;
         padding-right: 0;
+        .van-tabs__wrap{
+          height: 34px;
+        }
         .van-tabs__nav--card {
           margin: 0;
           border: none;
         }
         .van-tabs__nav--card {
-          height: 32px;
+          height: 34px;
         }
         .van-tab {
           width: 80px;
@@ -257,13 +294,6 @@ export default {
             color: rgba(255, 255, 255, 1);
           }
         }
-      }
-    }
-
-    .umlike {
-      .title {
-      }
-      .more {
       }
     }
   }

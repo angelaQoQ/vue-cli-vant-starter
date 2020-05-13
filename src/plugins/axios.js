@@ -11,7 +11,7 @@ import store from './../store'
 
 let config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
+  timeout: 30 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 }
 
@@ -26,15 +26,14 @@ let axiosSource // 需要最新的链接的保存参数的地方
 _axios.interceptors.request.use(
   function (config) {
     // Do something before request is sent
-    if (config.showLoading && !pageAxiosList.size) {
-      Vue.prototype.$toast.loading({
-        duration: 0,
-        mask: true,
-        forbidClick: true,
-        message: '加载中...',
-        loadingType: 'spinner'
-      })
-    }
+    // if (config.showLoading && !pageAxiosList.size) {
+    //   Vue.prototype.$toast.loading({
+    //     duration: 0,
+    //     forbidClick: true,
+    //     message: 'Loadding...',
+    //     loadingType: 'circle'
+    //   })
+    // }
     // 检查 pageAxiosList 里面是否有已经发送相同接口 url ，如果有的话直接取消发送
     if (config.needLast) {
       // 请求链接需要最新的
@@ -55,7 +54,7 @@ _axios.interceptors.request.use(
   },
   function (error) {
     // Do something with request error
-    Vue.prototype.$toast('网络出错，请重试')
+    Vue.prototype.$toast('Network Error')
     return Promise.reject(error)
   }
 )
@@ -71,10 +70,10 @@ _axios.interceptors.response.use(
     if (response.config.showLoading && !pageAxiosList.size) {
       Vue.prototype.$toast.clear()
     }
-    if (response.data.isok) {
+    if (response.data.status == 0) {
       return response.data
     } else {
-      Vue.prototype.$toast('网络出错，请重试')
+      Vue.prototype.$toast('Network Error')
     }
     return response
   },

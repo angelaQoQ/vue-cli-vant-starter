@@ -1,5 +1,15 @@
+/*
+ * @Description:
+ * @FilePath: \vue-cli-vant-starter\vue.config.js
+ * @Version: 1.0
+ * @Autor: CuiGang
+ * @Date: 2020-05-11 15:04:33
+ * @LastEditors: CuiGang
+ * @LastEditTime: 2020-05-12 14:02:36
+ */
 const autoprefixer = require('autoprefixer')
 const pxtorem = require('postcss-pxtorem')
+
 
 module.exports = {
   css: {
@@ -22,9 +32,10 @@ module.exports = {
 
   devServer: {
     proxy: {
-      '/api': {
-        target: '<url>',
-        ws: true,
+      '/': {
+        target: 'https://www.haiwaidz.com/',
+        ws: false,
+        secure: false,
         changeOrigin: true
       }
     }

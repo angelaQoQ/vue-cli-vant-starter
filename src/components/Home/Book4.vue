@@ -5,13 +5,13 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 17:39:18
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-11 18:33:22
+ * @LastEditTime: 2020-05-12 15:13:37
  -->
 <template>
-  <div class="home_book4">
+  <div class="home_book4" v-if=" bookInfo.items && bookInfo.items.length > 0">
     <!-- title -->
     <h2 class="book4h2">
-      <span class="title">{{bookInfo.title}}</span>
+      <span class="title">{{bookInfo.name}}</span>
       <span class="more">See more</span>
     </h2>
 
@@ -19,18 +19,17 @@
     <div class="hide_bar_container">
       <div class="grid_container">
         <van-grid class="book4grid">
-
           <van-grid-item
             class="book4grid_item"
-            v-for="(item,index) in bookInfo.books"
-            :title="item.name"
+            v-for="(item,index) in bookInfo.items"
             :key="index"
-            @click="handleOpenBook(item.id)"
+            v-if=" ( index < 4)"
+            :title="item.name"
+            @click="handleOpenBook(item.id || item.bookId)"
           >
-            <img class="book4img" :src="item.bannerUrl" alt title="goodNovel" />
+            <img class="book4img" :src="item.bannerUrl || item.cover" alt title="goodNovel" />
             <p class="bookname">{{item.name}}</p>
-            <p class="author">{{item.author || "goodMan"}}</p>
-
+            <p class="author">{{item.author || ""}}</p>
           </van-grid-item>
         </van-grid>
       </div>
@@ -49,6 +48,7 @@ export default {
   methods: {
     handleOpenBook(bookid) {
       console.log("bookId" + bookid);
+      this.$router.push(`/bookinfo/${bookid}`)
     }
   }
 };
@@ -99,8 +99,8 @@ export default {
               border: none !important;
             }
           }
-          .van-grid-item__content::after{
-            border:none;
+          .van-grid-item__content::after {
+            border: none;
           }
           .book4img {
             width: 130px;
@@ -109,7 +109,7 @@ export default {
             border-radius: 4px;
             border: 1px solid rgba(58, 74, 90, 0.1);
           }
-          p{
+          p {
             margin: 0;
             color: rgba(58, 74, 90, 1);
             font-family: SourceHanSansCN-Medium, SourceHanSansCN;
@@ -122,12 +122,18 @@ export default {
             height: 18px;
             font-size: 15px;
             line-height: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
           .author {
             margin-top: 6px;
             height: 15px;
             font-size: 12px;
             line-height: 15px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
       }
