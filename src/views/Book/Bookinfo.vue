@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-12 14:41:54
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-13 17:46:24
+ * @LastEditTime: 2020-05-13 20:19:38
  -->
 <template>
   <div class="bookinfo_page">
@@ -48,11 +48,15 @@
         </div>
         <p class="bookname ddd1">{{bookInfo.bookName}}</p>
         <p class="author ddd1">{{bookInfo.editor}}</p>
-        <p class="desc ddd2">{{bookInfo.introduction}}</p>
+        <p
+          :class="['desc' , { 'ddd2' : iscollep }]"
+          @click.self="iscollep = !iscollep"
+        >{{bookInfo.introduction}}</p>
       </div>
 
       <!-- 完结时间 -->
       <van-divider
+        v-show="!iscollep"
         :style="{ color: 'rgba(58, 74, 90, 1)', borderColor: 'rgba(58, 74, 90, 1)', padding: '0 2px' , fontSize:'10px', lineHeight:'14px',fontWeight:400}"
       >
         <div class="pub">
@@ -74,23 +78,44 @@
           Comments
           <span>123 Reviews</span>
         </h2>
-
-        <book-info-commen v-for="(item , index) in commenList" :key="index" :commenInfo="item"></book-info-commen>
+        <template v-if="commenList&&commenList.length>0">
+          <book-info-commen v-for="(item , index) in commenList" :key="index" :commenInfo="item"></book-info-commen>
+        </template>
+        <template v-else>
+          <img class="no_commen_img" src="../../assets/images/base/empty2.png" alt="nodata" />
+          <p class="no_commen_p">No comment yet</p>
+        </template>
       </div>
 
       <!-- 添加评论 -->
-      <div class="add_comment">
-        <van-field
-          class="add_comment_input"
-          v-model="sendCommen"
-          autosize
-          type="textarea"
-          placeholder="What do you think?"
-          :clickable="true"
-          input-align="left"
-          right-icon="envelop-o"
-        />
+      <div class="add_comment" @click.self="showCommne = true">
+        What do you think?
+        <img src="../../assets/images/bookinfo/icon_add_commen.png" alt />
       </div>
+
+      <!-- 加评弹窗 -->
+      <van-popup
+        class="add_commen_mask"
+        v-model="showCommne"
+        round
+        position="bottom"
+        :style="{ height: '40%' }"
+      >
+        <div class="top">
+          <img src="../../assets/images/bookinfo/icon_cancle.png" alt />
+          Rate this book
+        </div>
+        <div class="rate">
+          <span
+            @click="choseRate(index)"
+            :class="['star' , {'active': index<=chosenIndex }]"
+            v-for="(item, index) in 10"
+            :key="index"
+          ></span>
+        </div>
+        <div class="content"></div>
+        <div class="post"></div>
+      </van-popup>
     </div>
 
     <!-- 阅读工具栏 -->
@@ -122,14 +147,29 @@ export default {
       name: "BookInfo",
       bookInfo: {},
       morebook: {}, // 推荐书籍
-      showShare: false,
+      showShare: false, // 展示分享
+      showCommne: false, // 展示分享
+      iscollep: true, // 书籍介绍折叠状态
       shareOptions: [
-        { name: "Facebook", icon: "../../assets/images/base/face.png" },
-        { name: "Google", icon: "/images/base/face.png" },
-        { name: "Twitter", icon: "/images/base/face.png" }
+        {
+          name: "Facebook",
+          icon:
+            "https://lh3.googleusercontent.com/ccWDU4A7fX1R24v-vvT480ySh26AYp97g1VrIB_FIdjRcuQB2JP2WdY7h_wVVAeSpg=s180-rw"
+        },
+        {
+          name: "Google",
+          icon:
+            "https://lh3.googleusercontent.com/RZ5luCUwc5QtJP9xDn-ZCwEutT160GVyoh5K1eu4YJ5fD7v4LP5ptVdgR9mz4Hnr7A=s180-rw"
+        },
+        {
+          name: "Twitter",
+          icon:
+            "https://lh3.googleusercontent.com/wIf3HtczQDjHzHuu7vezhqNs0zXAG85F7VmP7nhsTxO3OHegrVXlqIh_DWBYi86FTIGk=s180-rw"
+        }
       ],
       commenList: [], // 评论列表
-      sendCommen: "" // 提交评论
+      sendCommen: "", // 提交评论
+      chosenIndex: -1 // 评星标红的末端索引
     };
   },
   created() {
@@ -143,6 +183,7 @@ export default {
     BookInfoCommen
   },
   methods: {
+    // 书籍数据
     async initData(bookId) {
       let res = await this.axios.post("/hwyc/book/detail", { bookId });
       if (res.status == 0) {
@@ -155,7 +196,7 @@ export default {
         Toast(res.message || "Network Error");
       }
     },
-
+    // 评论数据
     async initComments(bookId) {
       let res = await this.axios.post("/hwyc/comment/book/comments", {
         bookId,
@@ -171,13 +212,17 @@ export default {
         this.commenList = res.data.webBookComments.records;
         this.$forceUpdate();
       }
-      console.log(res);
+    },
+
+    // 选星
+    choseRate(index) {
+      console.log(index);
+
+      this.chosenIndex = index;
     },
 
     // 阅读
-    handleRead() {
-      console.log("READ");
-    },
+    handleRead() {},
 
     // 后退
     handleGoBack() {
@@ -218,6 +263,18 @@ export default {
           float: right;
         }
       }
+      .van-share-sheet__options {
+        padding: 20px 60px;
+        padding-top: 0;
+        .van-share-sheet__option {
+          width: 30%;
+          img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+          }
+        }
+      }
     }
 
     .bookinfo {
@@ -226,7 +283,7 @@ export default {
         height: 226px;
         font-size: 0;
         line-height: 0;
-        border-radius:4px;
+        border-radius: 4px;
       }
       .shadowbox {
         height: 22px;
@@ -266,8 +323,11 @@ export default {
         font-size: 12px;
         color: rgba(58, 74, 90, 1);
         text-align: justify;
-        height: 80px;
-        overflow: hidden;
+        // max-height: 80px;
+        &.ddd2 {
+          overflow: hidden;
+          max-height: 1000px;
+        }
       }
     }
 
@@ -297,7 +357,7 @@ export default {
       background: rgba(0, 0, 0, 1);
       border-radius: 3px;
       opacity: 0.1;
-      margin:0 auto;
+      margin: 0 auto;
     }
 
     .comments {
@@ -322,20 +382,90 @@ export default {
           text-align: right;
         }
       }
-    }
-
-    .add_comment .add_comment_input {
-      width: 342px;
-      background: rgba(244, 246, 248, 1);
-      border-radius: 18px;
-      padding: 0 10px;
-
-      textarea {
+      .no_commen_img {
+        display: block;
+        width: 180px;
+        height: 180px;
+        margin: 0 auto;
+        margin-bottom: 16px;
+      }
+      .no_commen_p {
+        height: 21px;
         font-size: 16px;
         font-family: PingFangSC-Regular, PingFang SC;
         font-weight: 400;
         color: rgba(58, 74, 90, 1);
-        line-height: 38px;
+        line-height: 22px;
+        text-align: center;
+      }
+    }
+
+    .add_comment {
+      box-sizing: border-box;
+      width: 342px;
+      background: rgba(244, 246, 248, 1);
+      border-radius: 18px;
+      padding: 0 20px;
+      font-size: 16px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: rgba(58, 74, 90, 1);
+      line-height: 38px;
+      img {
+        width: 24px;
+        height: 24px;
+        margin-top: 8px;
+        float: right;
+      }
+    }
+
+    .add_commen_mask {
+      .top {
+        height: 54px;
+        font-size: 18px;
+        font-family: STIXGeneral-Bold, STIXGeneral;
+        font-weight: bold;
+        color: rgba(76, 93, 114, 1);
+        line-height: 54px;
+        text-align: center;
+        position: relative;
+        padding-bottom: 0;
+        img {
+          position: absolute;
+          width: 24px;
+          height: 24px;
+          left: 16px;
+          top: 16px;
+        }
+      }
+      .rate {
+        text-align: center;
+        .star {
+          display: inline-block;
+          width: 16px;
+          height: 32px;
+          background: url("../../assets/images/bookinfo/icon_star_empty.png")
+            no-repeat center center;
+          background-size: 32px 32px;
+          background-position: 0 0;
+          &:nth-child(2n) {
+            margin-right: 8px;
+            background-position: -16px 0;
+          }
+          &:nth-last-child {
+            margin: 0;
+          }
+          &.active {
+            background: url("../../assets/images/bookinfo/icon_star_fill.png")
+              no-repeat center center;
+            background-size: 32px 32px;
+            background-position: 0 0;
+          }
+          &.active:nth-child(2n) {
+            margin-right: 8px;
+            background-position: -16px 0;
+          }
+        }
       }
     }
   }
