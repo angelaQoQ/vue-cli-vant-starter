@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-12 19:43:34
+ * @LastEditTime: 2020-05-13 15:45:24
  -->
 <template>
   <div id="app">
@@ -41,7 +41,7 @@
 </template>
 <script>
 import Vue from "vue";
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 import { Tabbar, TabbarItem } from "vant";
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
@@ -53,7 +53,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["showLoadding" , "showGuid"])
+    ...mapState(["showLoadding", "showGuid"])
+  },
+  mounted() {
+    this.$store.dispatch("changeShowGuid", true);
   }
 };
 </script>
@@ -63,7 +66,6 @@ export default {
     "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   font-size: 14px;
 }
@@ -88,5 +90,17 @@ export default {
 }
 .van-search__content {
   background-color: rgba(0, 0, 0, 0.05) !important;
+}
+.ddd1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ddd2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 </style>

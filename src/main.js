@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-11 17:49:54
+ * @LastEditTime: 2020-05-13 13:37:48
  */
 import Vue from 'vue'
 import './plugins/axios'
@@ -17,7 +17,7 @@ import store from './store'
 
 // Vant配置
 import "@/plugins/vant.js"
-
+// import "@/plugins/vconsole.js"
 
 Vue.config.productionTip = false
 

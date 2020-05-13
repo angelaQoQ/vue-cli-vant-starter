@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-12 19:43:14
+ * @LastEditTime: 2020-05-13 13:47:26
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -29,7 +29,7 @@ export default new Vuex.Store({
       state.showLoadding = target || false;
     },
     CHANGESHOWGUID(state, target) {
-      state.showGuid = target || true;
+      state.showGuid = target;
     }
   },
   actions: {
