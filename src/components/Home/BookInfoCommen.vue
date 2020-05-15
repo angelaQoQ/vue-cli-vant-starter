@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-13 15:31:49
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-13 20:29:55
+ * @LastEditTime: 2020-05-15 14:59:24
  -->
 <template>
   <div class="bookinfo_commen">
@@ -22,21 +22,50 @@
     </div>
 
     <div class="like">
-      <img src="../../assets/images/bookinfo/icon_like.png" alt class="like" />{{commenInfo.likeNum || 0}}
-      <img src="../../assets/images/bookinfo/icon_chat.png" alt class="chat" />{{commenInfo.replyNum || 0}}
+      <img src="../../assets/images/bookinfo/icon_like.png" @click="handlePraise" alt class="like" />
+      {{commenInfo.likeNum || 0}}
+      <img
+        src="../../assets/images/bookinfo/icon_chat.png"
+        alt
+        class="chat"
+        @click="handleAddNewComment"
+      />
+      {{commenInfo.replyNum || 0}}
     </div>
   </div>
 </template>
 <script>
 export default {
   name: "BookInfoCommen",
-  props:["commenInfo"],
-  created(){
-  },
+  props: ["commenInfo"],
+  created() {},
   data() {
     return {
       name: "BookInfoCommen"
     };
+  },
+  methods:{
+    // 点赞
+    async handlePraise(){
+      let res = await this.axios.post("/hwyc/comment/praise" , {
+        bookId:this.commenInfo.bookId,
+        chapterId:0,
+        paragraphId:'',
+        rate:0,
+        referId:this.commenInfo.referId,
+      });
+
+      if(res.status == 0){
+        this.$toast("praise suc");
+      }else {
+        this.$toast(res.message);
+      }
+    },
+
+    // 追加评论
+    handleAddNewComment(){
+      this.$emit('AddNewComment' , this.commenInfo);
+    }
   }
 };
 </script>
@@ -91,6 +120,9 @@ export default {
     p {
       margin: 0;
       padding: 0;
+      text-align: justify;
+      text-indent: 2em;
+      word-break: break-word;
     }
   }
 

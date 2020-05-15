@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-12 14:41:54
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-14 10:58:35
+ * @LastEditTime: 2020-05-15 15:48:28
  -->
 <template>
   <div class="bookinfo_page">
@@ -79,7 +79,12 @@
           <span>123 Reviews</span>
         </h2>
         <template v-if="commenList&&commenList.length>0">
-          <book-info-commen v-for="(item , index) in commenList" :key="index" :commenInfo="item"></book-info-commen>
+          <book-info-commen
+            @AddNewComment="AddNewComment"
+            v-for="(item , index) in commenList"
+            :key="index"
+            :commenInfo="item"
+          ></book-info-commen>
         </template>
         <template v-else>
           <img class="no_commen_img" src="../../assets/images/base/empty2.png" alt="nodata" />
@@ -100,12 +105,14 @@
         round
         position="bottom"
         :style="{ height: '53%' }"
+        @closed="closeMask"
       >
         <div class="top">
           <img src="../../assets/images/bookinfo/icon_cancle.png" alt />
-          Rate this book
+          <template v-if="!isAddUserComment">Rate this book</template>
+          <template v-if="isAddUserComment">@{{userNickname}}</template>
         </div>
-        <div class="rate">
+        <div class="rate" v-if="!isAddUserComment">
           <span
             @click="choseRate(index)"
             :class="['star' , {'active': index<=chosenIndex }]"
@@ -117,7 +124,7 @@
           <textarea placeholder="Review should be more than 140 characters" v-model="commenContent"></textarea>
         </div>
         <div class="post">
-          <div class="count">0/300</div>
+          <div class="count">{{commenContent.trim().length}}/300</div>
           <a href="javascript:;" class="post_btn" @click="handlePostCommen">
             <img src="../../assets/images/bookinfo/icon_add_commen_2.png" alt />POST
           </a>
@@ -146,18 +153,21 @@
 <script>
 import Book4 from "@/components/Home/Book4.vue";
 import BookInfoCommen from "@/components/Home/BookInfoCommen.vue";
+import { mapState } from "vuex";
 
 export default {
   name: "BookInfo",
   data() {
     return {
       name: "BookInfo",
+      iscollep: true, // 书籍介绍折叠状态
       bookInfo: {},
-      userInfo:{},
+      userInfo: {},
       morebook: {}, // 推荐书籍
       showShare: false, // 展示分享
       showCommne: false, // 展示分享
-      iscollep: true, // 书籍介绍折叠状态
+      isAddUserComment: false, //是否是追加评论
+      userNickname: "", // 给哪位用户追加评论
       shareOptions: [
         {
           name: "Facebook",
@@ -189,6 +199,9 @@ export default {
   components: {
     Book4,
     BookInfoCommen
+  },
+  computed: {
+    ...mapState(["IsLogined"])
   },
   methods: {
     // 书籍数据
@@ -230,10 +243,20 @@ export default {
     },
 
     // 发布评论
-    async handlePostCommen(){
-      // 长度校验
+    async handlePostCommen() {
+      if (!this.isAddUserComment && this.chosenIndex < 0) {
+        this.$toast("rate star first");
+      }
 
-      let res = await this.axios.post('/hwyc/comment/add' , {
+      if (
+        this.commenContent.trim().length < 10 ||
+        this.commenContent.trim().length > 300
+      ) {
+        this.$toast("length limit to 10 - 300 chapters");
+        return;
+      }
+
+      let res = await this.axios.post("/hwyc/comment/add", {
         bookCover: this.bookInfo.cover,
         bookId: this.bookInfo.bookId,
         bookName: this.bookInfo.bookName,
@@ -246,15 +269,33 @@ export default {
         referUserId: "",
         referUserName: "",
         type: 1, // 书籍评论1，章节评论2，点赞3
-        userAvatar: this.userInfo.avatar || 'none',
-        userId: this.userInfo.id || '',
-        userNickname: this.userInfo.nickname || 'visitor',
+        userAvatar: this.userInfo.avatar || "none",
+        userId: this.userInfo.id || "",
+        userNickname: this.userInfo.nickname || "visitor",
         rate: this.chosenIndex + 1
-      })
+      });
 
-      if(res.status == 0){
-        console.log(res);
+      if (res.status == 0) {
+        this.$toast("Add comment suc");
+        this.showCommne = false;
+        this.isAddUserComment = false;
+      } else {
+        this.$toast(res.message);
       }
+    },
+
+    // 对评论追加评论
+    async AddNewComment(info) {
+      this.showCommne = true;
+      this.isAddUserComment = true; // 隐藏评星
+      this.userNickname = info.userNickname; // 给谁追加评论
+    },
+
+    // 关闭评论弹窗
+    closeMask() {
+      this.isAddUserComment = false;
+      this.commenContent = "";
+      this.chosenIndex = -1;
     },
 
     // 阅读
@@ -262,7 +303,7 @@ export default {
 
     // 后退
     handleGoBack() {
-      this.$router.back();
+      this.$router.push('/');
     },
     //分享
     handleShare() {},
@@ -303,7 +344,7 @@ export default {
         padding: 20px 60px;
         padding-top: 0;
         .van-share-sheet__option {
-          width: 30%;
+          width: 33.33%;
           img {
             width: 48px;
             height: 48px;
@@ -555,11 +596,11 @@ export default {
           font-weight: 600;
           color: rgba(255, 255, 255, 1);
           text-align: center;
-          img{
+          img {
             width: 24px;
             height: 24px;
             margin-top: 6px;
-            margin-right:10px;
+            margin-right: 10px;
             vertical-align: top;
           }
         }
@@ -577,6 +618,7 @@ export default {
     overflow: hidden;
     background-color: #fff;
     box-shadow: 0px -6px 4px 0px rgba(0, 0, 0, 0.05);
+    z-index: 2;
     img {
       width: 24px;
       height: 24px;

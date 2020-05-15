@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-14 10:50:09
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-14 18:11:09
+ * @LastEditTime: 2020-05-15 14:14:16
  -->
 <template>
   <div class="login_page">
@@ -202,6 +202,8 @@
   </div>
 </template>
 <script>
+import { checkEmail, judgePassword } from "@/plugins/common.js";
+
 export default {
   name: "LoginPage",
   data() {
@@ -230,16 +232,14 @@ export default {
         one: false,
         two: false,
         three: false
-      },
-      // 三方登录id 登录成功后的跳转地址
-      FaceGoogleTwitterIds: {},
-      redirectUrl: ""
+      }
     };
   },
   created() {
     this.handleGetFGT(); // 获取三方登录ID
   },
   methods: {
+    // 三方登录---------------------------------------------------------------------------↓
     // 获取三方登录id
     async handleGetFGT() {
       let res = await this.axios.post("/hwyc/user/third/login/attrs", {
@@ -247,16 +247,23 @@ export default {
       });
 
       if (res.status == 0) {
-        this.FaceGoogleTwitterIds = { ...res.data };
-        this.redirectUrl = res.data.redirectUrl;
+        this.initHelloFGT(res.data);
       }
     },
-
-    // 三方登录-----------↓
+    // 初始化第三方登录id
+    initHelloFGT(loginInfo) {
+      this.$hello.init(
+        {
+          facebook: loginInfo.facebookId,
+          google: loginInfo.googleId,
+          twitter: loginInfo.twitterKey
+        },
+        { redirect_uri: loginInfo.redirectUrl }
+      );
+    },
+    // 进行登录
     handleLoginFGT(type) {
-      console.log(1);
-
-      // 开启第三方登录监听
+      // 开启第三方登录成功监听
       this.$hello.on("auth.login", function(auth) {
         // Call user information, for the given network
         this.$hello(auth.network)
@@ -273,11 +280,48 @@ export default {
           });
       });
 
-      console.log(2);
-
+      // fb google 处理
       this.$hello(type).login();
     },
-    // 三方登录-----------↑
+    // 三方登录---------------------------------------------------------------------------↑
+
+    // 邮箱登录---------------------------------------------------------------------------↓
+    async handleEmailLogin() {
+      let that = this;
+
+      if (!checkEmail(that.emailInfo.email)) {
+        that.emailInfo.emailError = true;
+        return;
+      } else {
+        that.emailInfo.emailError = false;
+      }
+
+      if (!judgePassword(that.emailInfo.password)) {
+        that.emailInfo.pwdError = true;
+        return;
+      } else {
+        that.emailInfo.pwdError = false;
+      }
+
+      let res = await this.axios.post("/hwyc/user/login", {
+        loginType: "email",
+        oauthVerifier: "",
+        accessToken: that.emailInfo.email,
+        password: that.emailInfo.password
+      });
+
+      if (res.status == 0) {
+        this.$toast("login suc");
+        this.$store.dispatch("setLoginState", true); // 记录登录状态
+        this.$store.dispatch("setUserInfo", res.data); // 存储用户数据
+        this.$store.dispatch("showLogin", false); // 关闭登录页
+        window.localStorage.setItem("userInfo", JSON.stringify(res.data)); // 本地存储用户数
+        this.closeMask();
+        this.$forceUpdate();
+      }
+    },
+
+    // 邮箱登录---------------------------------------------------------------------------↑
 
     // 展示註冊彈窗
     handleShowRegisterMask() {
@@ -287,14 +331,20 @@ export default {
     // 郵箱註冊請求
     handleEmailRegister() {},
     // 郵箱登陸請求
-    handleEmailLogin() {},
     // 重置密码请求
     handleResetPWD() {},
 
     // 用戶名密碼去兩端空格
     formatter(val) {
       return val.trim();
-    }
+    },
+
+    // 关闭所有弹窗
+    closeMask(){
+      this.showLoginPopup = false;
+      this.showRegisterPopup = false;
+      this.showResetPWDPopup = false;
+    },
   }
 };
 </script>
@@ -441,8 +491,11 @@ export default {
             font-size: 16px;
             font-family: SourceHanSansCN-Regular, SourceHanSansCN;
             font-weight: 400;
-            color: rgba(58, 74, 90, 0.4);
+            color: #3a4a5a;
             line-height: 44px;
+            [placeholder] {
+              color: rgba(58, 74, 90, 0.4);
+            }
           }
         }
       }

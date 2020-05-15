@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from './../store'
+import {setCookie , clearCookie , getCookie} from '../plugins/cookie';
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -70,13 +71,16 @@ _axios.interceptors.response.use(
     if (response.config.showLoading && !pageAxiosList.size) {
       Vue.prototype.$toast.clear()
     }
+
+
     if (response.data.status == 0) {
       return response.data
-    }else if(response.data.status == 6){
+    } else if (response.data.status == 6) {
       Vue.prototype.$toast('Login First!');
-      store.dispatch("showLogin");
-    }else {
-      Vue.prototype.$toast('Network Error')
+      store.dispatch('setLoginState', false); // 清除登录状态
+      store.dispatch('setUserInfo', undefined); // 删除用户数据
+      window.localStorage.removeItem('userInfo');// 删除用户数据
+      store.dispatch("showLogin" , true);  // 拉起登录页面
     }
     return response.data
   },
@@ -102,12 +106,12 @@ Plugin.install = function (Vue, options) {
   window.axios = _axios
   Object.defineProperties(Vue.prototype, {
     axios: {
-      get () {
+      get() {
         return _axios
       }
     },
     $axios: {
-      get () {
+      get() {
         return _axios
       }
     }
