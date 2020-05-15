@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-14 17:17:07
+ * @LastEditTime: 2020-05-15 15:58:20
  */
 import Vue from 'vue'
 import Router from 'vue-router'
@@ -16,6 +16,7 @@ const Search = () => import('@/views/Search/Search.vue')
 const Bookinfo = () => import('@/views/Book/Bookinfo.vue');
 const Login = () => import('@/views/Login/Login.vue');
 const PasswordRecovery = () => import('@/views/Login/PasswordRecovery.vue');
+const ReadBook = () => import('@/views/Read/Read.vue');
 Vue.use(Router)
 
 export default new Router({
@@ -36,6 +37,11 @@ export default new Router({
           component: Bookinfo
         }
       ]
+    },
+    {
+      path: '/readbook/:bookid',
+      name: 'readbook',
+      component: ReadBook
     },
     {
       path: '/login',

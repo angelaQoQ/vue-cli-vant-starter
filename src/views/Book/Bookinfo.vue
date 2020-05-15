@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-12 14:41:54
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-15 15:51:40
+ * @LastEditTime: 2020-05-15 16:02:08
  -->
 <template>
   <div class="bookinfo_page">
@@ -300,7 +300,7 @@ export default {
 
     // 阅读
     handleRead() {
-
+      this.$router.push(`/readbook/${this.bookInfo.bookId}`)
     },
 
     // 后退
