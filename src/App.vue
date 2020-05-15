@@ -5,46 +5,19 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-13 15:45:24
+ * @LastEditTime: 2020-05-14 17:45:16
  -->
 <template>
   <div id="app">
     <router-view />
-
-    <van-tabbar
-      v-model="active"
-      class="footer_icon"
-      active-color="rgba(238, 55, 153, 1)"
-      inactive-color="#000"
-      v-if="showGuid"
-    >
-      <van-tabbar-item replace to="/">
-        <van-icon name="home-o" />
-        <br />Books
-      </van-tabbar-item>
-      <van-tabbar-item replace to="/library">
-        <van-icon name="shop-o" />
-        <br />Library
-      </van-tabbar-item>
-      <van-tabbar-item replace to="/community">
-        <van-icon name="comment-o" />
-        <br />Community
-      </van-tabbar-item>
-      <van-tabbar-item replace to="/profile">
-        <van-icon name="manager-o" />
-        <br />Profile
-      </van-tabbar-item>
-    </van-tabbar>
-
+    <login v-if="showLoginFlag"></login>
     <!-- <van-loading v-show="showLoadding" vertical color="rgba(249, 67, 165, 1)">Loading</van-loading> -->
   </div>
 </template>
 <script>
 import Vue from "vue";
 import { mapState } from "vuex";
-import { Tabbar, TabbarItem } from "vant";
-Vue.use(Tabbar);
-Vue.use(TabbarItem);
+import Login from '@/views/Login/Login.vue';
 
 export default {
   data() {
@@ -52,8 +25,11 @@ export default {
       active: 0
     };
   },
+  components:{
+    Login
+  },
   computed: {
-    ...mapState(["showLoadding", "showGuid"])
+    ...mapState(["showLoadding", "showGuid" , "showLoginFlag"])
   },
   mounted() {
     this.$store.dispatch("changeShowGuid", true);

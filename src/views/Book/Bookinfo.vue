@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-12 14:41:54
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-13 20:19:38
+ * @LastEditTime: 2020-05-14 10:58:35
  -->
 <template>
   <div class="bookinfo_page">
@@ -99,7 +99,7 @@
         v-model="showCommne"
         round
         position="bottom"
-        :style="{ height: '40%' }"
+        :style="{ height: '53%' }"
       >
         <div class="top">
           <img src="../../assets/images/bookinfo/icon_cancle.png" alt />
@@ -113,8 +113,15 @@
             :key="index"
           ></span>
         </div>
-        <div class="content"></div>
-        <div class="post"></div>
+        <div class="content">
+          <textarea placeholder="Review should be more than 140 characters" v-model="commenContent"></textarea>
+        </div>
+        <div class="post">
+          <div class="count">0/300</div>
+          <a href="javascript:;" class="post_btn" @click="handlePostCommen">
+            <img src="../../assets/images/bookinfo/icon_add_commen_2.png" alt />POST
+          </a>
+        </div>
       </van-popup>
     </div>
 
@@ -146,6 +153,7 @@ export default {
     return {
       name: "BookInfo",
       bookInfo: {},
+      userInfo:{},
       morebook: {}, // 推荐书籍
       showShare: false, // 展示分享
       showCommne: false, // 展示分享
@@ -168,7 +176,7 @@ export default {
         }
       ],
       commenList: [], // 评论列表
-      sendCommen: "", // 提交评论
+      commenContent: "", // 提交评论
       chosenIndex: -1 // 评星标红的末端索引
     };
   },
@@ -219,6 +227,34 @@ export default {
       console.log(index);
 
       this.chosenIndex = index;
+    },
+
+    // 发布评论
+    async handlePostCommen(){
+      // 长度校验
+
+      let res = await this.axios.post('/hwyc/comment/add' , {
+        bookCover: this.bookInfo.cover,
+        bookId: this.bookInfo.bookId,
+        bookName: this.bookInfo.bookName,
+        chapterId: "",
+        chapterName: "",
+        chapterName: "",
+        content: this.commenContent,
+        refer2Id: "",
+        referId: "",
+        referUserId: "",
+        referUserName: "",
+        type: 1, // 书籍评论1，章节评论2，点赞3
+        userAvatar: this.userInfo.avatar || 'none',
+        userId: this.userInfo.id || '',
+        userNickname: this.userInfo.nickname || 'visitor',
+        rate: this.chosenIndex + 1
+      })
+
+      if(res.status == 0){
+        console.log(res);
+      }
     },
 
     // 阅读
@@ -464,6 +500,67 @@ export default {
           &.active:nth-child(2n) {
             margin-right: 8px;
             background-position: -16px 0;
+          }
+        }
+      }
+      .content {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px;
+
+        textarea {
+          height: 190px;
+          width: 100%;
+          box-sizing: border-box;
+          border: none;
+          border-top: 1px solid rgba(58, 74, 90, 0.2);
+          border-bottom: 1px solid rgba(58, 74, 90, 0.2);
+          resize: none;
+          font-size: 16px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(67, 83, 102, 1);
+          line-height: 20px;
+        }
+      }
+      .post {
+        overflow: hidden;
+        padding: 0 10px;
+        .count {
+          float: left;
+          width: 200px;
+          height: 12px;
+          font-size: 12px;
+          font-family: PingFangSC-Regular, PingFang SC;
+          font-weight: 400;
+          color: rgba(76, 93, 114, 1);
+          line-height: 14px;
+          margin-top: 15px;
+        }
+        .post_btn {
+          float: right;
+          position: relative;
+          width: 130px;
+          height: 36px;
+          line-height: 36px;
+          background: linear-gradient(
+            141deg,
+            rgba(255, 137, 184, 1) 0%,
+            rgba(249, 67, 165, 1) 100%
+          );
+          box-shadow: 0px 6px 6px 0px rgba(252, 37, 187, 0.2);
+          border-radius: 22px;
+          font-size: 18px;
+          font-family: PingFangSC-Semibold, PingFang SC;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 1);
+          text-align: center;
+          img{
+            width: 24px;
+            height: 24px;
+            margin-top: 6px;
+            margin-right:10px;
+            vertical-align: top;
           }
         }
       }

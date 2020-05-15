@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-13 15:31:49
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-13 16:18:39
+ * @LastEditTime: 2020-05-13 20:29:55
  -->
 <template>
   <div class="bookinfo_commen">
@@ -32,8 +32,6 @@ export default {
   name: "BookInfoCommen",
   props:["commenInfo"],
   created(){
-    console.log(this.commenInfo);
-
   },
   data() {
     return {

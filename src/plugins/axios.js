@@ -72,10 +72,13 @@ _axios.interceptors.response.use(
     }
     if (response.data.status == 0) {
       return response.data
-    } else {
+    }else if(response.data.status == 6){
+      Vue.prototype.$toast('Login First!');
+      store.dispatch("showLogin");
+    }else {
       Vue.prototype.$toast('Network Error')
     }
-    return response
+    return response.data
   },
   function (error) {
     // Do something with response error
