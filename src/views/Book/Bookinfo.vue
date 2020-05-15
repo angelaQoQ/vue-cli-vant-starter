@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-12 14:41:54
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-15 15:48:28
+ * @LastEditTime: 2020-05-15 15:51:40
  -->
 <template>
   <div class="bookinfo_page">
@@ -110,7 +110,7 @@
         <div class="top">
           <img src="../../assets/images/bookinfo/icon_cancle.png" alt />
           <template v-if="!isAddUserComment">Rate this book</template>
-          <template v-if="isAddUserComment">@{{userNickname}}</template>
+          <template v-if="isAddUserComment">@{{userNickname || "visitor"}}</template>
         </div>
         <div class="rate" v-if="!isAddUserComment">
           <span
@@ -299,7 +299,9 @@ export default {
     },
 
     // 阅读
-    handleRead() {},
+    handleRead() {
+
+    },
 
     // 后退
     handleGoBack() {
