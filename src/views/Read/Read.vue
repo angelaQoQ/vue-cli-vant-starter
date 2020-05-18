@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-15 15:54:46
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-15 18:08:40
+ * @LastEditTime: 2020-05-15 18:19:04
  -->
 <template>
   <div class="read_page">
@@ -46,7 +46,15 @@
     <van-popup class="menu1" v-model="showToolMenue" position="bottom" :style="{ height: '20%' }">
       <div class="percent">
         <p class="title"></p>
-        <progress-bar width="100%" leftBg="yellow" bgc="#ccc" ballBgc="red" height="10px" @pbar-drag="handleBarDrag"></progress-bar>
+        <progress-bar
+          width="100%"
+          leftBg="yellow"
+          bgc="#ccc"
+          ballBgc="red"
+          height="10px"
+          @pbar-drag="handleBarDrag"
+          @pbar-seek="handleBarSeek"
+        ></progress-bar>
       </div>
 
       <div class="tools"></div>
@@ -55,7 +63,7 @@
 </template>
 
 <script>
-import ProgressBar from '@/components/util/ProgressBar.vue';
+import ProgressBar from "@/components/util/ProgressBar.vue";
 export default {
   name: "ReadPage",
   data() {
@@ -67,21 +75,24 @@ export default {
           "rgba(251, 253, 255, 1)",
           "rgba(0, 0, 0, 1)",
           "rgba(254, 238, 210, 1)"
-        ],
+        ]
       }
     };
   },
-  components:{
+  components: {
     ProgressBar
   },
   created() {
     let bookId = this.$route.params.bookid;
     console.log(bookId);
   },
-  methods:{
-    handleBarDrag(e){
+  methods: {
+    handleBarDrag(e) {
       console.log(e);
     },
+    handleBarSeek(e) {
+      console.log(e);
+    }
   }
 };
 </script>
@@ -123,9 +134,9 @@ export default {
     text-align: justify !important;
   }
 
-  .menu1{
+  .menu1 {
     box-sizing: border-box;
-    padding:30px;
+    padding: 30px;
   }
 }
 </style>
