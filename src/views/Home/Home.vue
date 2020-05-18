@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:11:51
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-12 15:14:36
+ * @LastEditTime: 2020-05-18 10:46:50
  -->
 <template>
   <div class="home">
@@ -38,7 +38,7 @@
       <div class="loop">
         <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
           <van-swipe-item v-for="(item,index) in bookInfo[0].items" :key="index">
-            <img v-lazy="item.bannerUrl" />
+            <img v-lazy="item.bannerUrl" :loading="'../../assets/images/bookinfo/default_cover.png'" />
           </van-swipe-item>
         </van-swipe>
       </div>

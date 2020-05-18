@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 17:47:56
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-15 17:14:34
+ * @LastEditTime: 2020-05-18 10:57:11
  */
 import Vue from 'vue'
 import { CheckboxGroup, Popup, Field, Divider, ShareSheet, Lazyload, Swipe, SwipeItem, Toast, Icon, Search, Tab, Tabs, Grid, GridItem, Loading, Pagination, Checkbox } from 'vant'
@@ -24,7 +24,10 @@ Vue.use(Pagination);
 Vue.use(Checkbox);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
-Vue.use(Lazyload);
+Vue.use(Lazyload, {
+  preLoad: 1.3,
+  attempt: 1
+});
 Vue.use(ShareSheet);
 Vue.use(Divider);
 Vue.use(Field);

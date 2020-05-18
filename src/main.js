@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 15:04:33
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-14 18:10:39
+ * @LastEditTime: 2020-05-18 10:56:49
  */
 import Vue from 'vue'
 import './plugins/axios'
@@ -19,11 +19,11 @@ import store from './store'
 
 // import "@/plugins/vconsole.js"
 
-// 三方登录
+//? 三方登录
 import HelloJs from 'hellojs';
 Vue.prototype.$hello = HelloJs;
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
   Vue.prototype.$toast.clear()
