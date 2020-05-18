@@ -5,7 +5,7 @@
  * @Autor: CuiGang
  * @Date: 2020-05-15 15:54:46
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-18 18:29:37
+ * @LastEditTime: 2020-05-18 20:22:17
  -->
 <template>
   <div class="read_page">
@@ -86,16 +86,17 @@
       position="bottom"
       :style="{ height: '85%' }"
     >
-      <!-- 章节列表 -->
-      <div class="chapter_info" v-show="showChapterList">
-        <!-- 章节头 -->
-        <div class="head">
-          <img src="../../assets/images/bookinfo/default_cover.png" alt title="GoodNovel" />
-          <div class="right">
-            <h2 class="bookname ddd1">Smashed to Pieces</h2>
-            <div class="bookdetail ddd1">Book detail</div>
-          </div>
+      <!-- 章节头 -->
+      <div class="head">
+        <img src="../../assets/images/bookinfo/default_cover.png" alt title="GoodNovel" />
+        <div class="right">
+          <h2 class="bookname ddd1">Smashed to Pieces</h2>
+          <div class="bookdetail ddd1">Book detail</div>
         </div>
+      </div>
+
+      <!-- 展示---章节列表 -->
+      <div class="chapter_info" v-show="showChapterList">
         <!-- 章节列表 -->
         <div class="chapter_list">
           <ul>
@@ -112,8 +113,57 @@
         </div>
       </div>
 
-      <!-- 书籍信息 -->
-      <div class="bookmark" v-show="!showChapterList">BookMark</div>
+      <!-- 展示---书籍信息 -->
+      <div class="bookmark" v-show="!showChapterList">
+
+        <!-- 有标签时 -->
+        <ul class="chapter_list">
+          <li class="chapter_item" v-for="(item, index) in bookMarkList" :key="index">
+            <!-- 标题 -->
+            <p class="chapter_name ddd1">{{item.name}}</p>
+            <!-- 滑块 -->
+            <van-swipe-cell
+              class="mark_slide"
+              v-for="(markItem,index2) in item.marks"
+              :key="index2"
+            >
+              <!-- 书签详情 -->
+              <div class="base">
+                <img
+                  class="mark"
+                  src="../../assets/images/icon_slices/icon_bookmark.png"
+                  alt
+                  title="GoodNovel"
+                />
+                <p class="info ddd2">{{markItem.content}}</p>
+              </div>
+              <!-- 删除按钮 -->
+              <template #right>
+                <van-button
+                  square
+                  type="danger"
+                  class="delete-button"
+                  @click="delBookMark(markItem.id)"
+                >
+                  <img
+                    class="icon"
+                    src="../../assets/images/icon_slices/icon_trash.png"
+                    alt
+                    title="GoodNovel"
+                  />
+                  <p class="del">Delete</p>
+                </van-button>
+              </template>
+            </van-swipe-cell>
+          </li>
+        </ul>
+
+        <!-- 无标签时 -->
+        <div class="bookmark_empty" v-if="bookMarkList.length==0">
+          <img src="../../assets/images/bookinfo/empty_mark.png" alt title="GoodNovel" />
+          <p>You haven't added any bookmarks yet</p>
+        </div>
+      </div>
 
       <!-- 底部切换按钮 -->
       <div class="footer">
@@ -131,7 +181,9 @@
           <span></span>
         </div>
       </div>
+
     </van-popup>
+
   </div>
 </template>
 
@@ -161,6 +213,39 @@ export default {
           status: 1, // 0 已读, 1 在读, 2未解锁
           id: 0
         }
+      ],
+
+      bookMarkList: [
+        {
+          name: "Cp1. Chapter titleCp1. ",
+          marks: [
+            {
+              content:
+                "123r life has become thThus, her life has become the season under the feetWei lingyue killed the woman Ji Shaoyun loved most. Thus, her life has become the season under the feet of the most humble maid. He wanted her to …",
+              id: 1
+            },
+            {
+              content:
+                "321r life has become thThus, her life has become the season under the feetWei lingyue killed the woman Ji Shaoyun loved most. Thus, her life has become the season under the feet of the most humble maid. He wanted her to …",
+              id: 1
+            }
+          ]
+        },
+        {
+          name: "Cp2. Chapter titleCp2. ",
+          marks: [
+            {
+              content:
+                "raaaa life has become thThus, her life has become the season under the feetWei lingyue killed the woman Ji Shaoyun loved most. Thus, her life has become the season under the feet of the most humble maid. He wanted her to …",
+              id: 1
+            },
+            {
+              content:
+                "r3333 life has become thThus, her life has become the season under the feetWei lingyue killed the woman Ji Shaoyun loved most. Thus, her life has become the season under the feet of the most humble maid. He wanted her to …",
+              id: 1
+            }
+          ]
+        }
       ]
     };
   },
@@ -180,6 +265,11 @@ export default {
     // ? 进度条控件阅读进度控制
     handleBarDrag(percent) {
       this.readPercent = percent;
+    },
+
+    // ? 删除书签
+    delBookMark(id) {
+      console.log(id);
     }
   }
 };
@@ -196,7 +286,7 @@ export default {
 .mask_radius {
   background: rgba(34, 34, 34, 1);
   box-sizing: border-box;
-  padding: 0 30px;
+  padding: 0 16px;
   border-radius: 22px 22px 0px 0px;
 }
 
@@ -282,46 +372,48 @@ export default {
 
   // !弹出层2
   .chapter_mask {
-    // !章节列表
-    .chapter_info {
-      .head {
-        padding-top: 20px;
-        overflow: hidden;
-        img {
-          float: left;
-          width: 34px;
-          height: 48px;
-          border-radius: 4px;
-          border: 1px solid rgba(58, 74, 90, 0.1);
-          margin-right: 12px;
+    // !书籍信息
+    .head {
+      padding-top: 20px;
+      overflow: hidden;
+      img {
+        float: left;
+        width: 34px;
+        height: 48px;
+        border-radius: 4px;
+        border: 1px solid rgba(58, 74, 90, 0.1);
+        margin-right: 12px;
+      }
+      .right {
+        float: left;
+        padding-top: 2px;
+        margin-bottom: 12px;
+        .bookname {
+          width: 256px;
+          height: 18px;
+          font-size: 18px;
+          font-family: SourceHanSansCN-Bold, SourceHanSansCN;
+          font-weight: bold;
+          color: rgba(255, 255, 255, 1);
+          line-height: 18px;
+          margin: 0;
+          padding: 0;
+          margin-bottom: 8px;
         }
-        .right {
-          float: left;
-          padding-top: 2px;
-          margin-bottom: 12px;
-          .bookname {
-            width: 256px;
-            height: 18px;
-            font-size: 18px;
-            font-family: SourceHanSansCN-Bold, SourceHanSansCN;
-            font-weight: bold;
-            color: rgba(255, 255, 255, 1);
-            line-height: 18px;
-            margin: 0;
-            padding: 0;
-            margin-bottom: 8px;
-          }
-          .bookdetail {
-            width: 256px;
-            height: 12px;
-            font-size: 12px;
-            font-family: SourceHanSansCN-Medium, SourceHanSansCN;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 12px;
-          }
+        .bookdetail {
+          width: 256px;
+          height: 12px;
+          font-size: 12px;
+          font-family: SourceHanSansCN-Medium, SourceHanSansCN;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 0.8);
+          line-height: 12px;
         }
       }
+    }
+
+    // !章节列表
+    .chapter_info {
       .chapter_list {
         .chapter_item {
           width: 100%;
@@ -330,17 +422,16 @@ export default {
           position: relative;
           .chapter_name {
             font-size: 16px;
-            font-family: SourceHanSansCN-Medium, SourceHanSansCN;
             font-weight: 500;
             line-height: 48px;
-            padding: 0 14px 0 0;
+            padding: 0 32px 0 0;
             margin: 0;
           }
           .lock,
           .percent {
             position: absolute;
             top: 0;
-            right: -30px;
+            right: -5px;
             line-height: 48px;
             width: 42px;
             font-size: 12px;
@@ -353,6 +444,84 @@ export default {
 
     // !书籍标签
     .bookmark {
+      .chapter_list {
+        .chapter_item {
+          width: 100%;
+          line-height: 48px;
+          position: relative;
+          .chapter_name {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 48px;
+            padding: 0 14px 0 0;
+            margin: 0;
+          }
+
+          .mark_slide {
+            .base {
+              overflow: hidden;
+              img {
+                float: left;
+                width: 12px;
+                height: 12px;
+                margin-right: 12px;
+                margin-top: 12px;
+              }
+              .info {
+                float: left;
+                width: 306px;
+                height: 67px;
+                font-size: 12px;
+                font-weight: 400;
+                color: rgba(255, 255, 255, 1);
+                line-height: 18px;
+                padding: 0;
+                text-align: justify;
+              }
+            }
+            .van-swipe-cell__right {
+              right: -1px;
+              .delete-button {
+                height: 100%;
+                background-color: rgba(255, 67, 67, 1);
+                .icon {
+                  width: 24px;
+                  height: 24px;
+                }
+                .del {
+                  width: 52px;
+                  height: 14px;
+                  font-size: 12px;
+                  font-family: SourceHanSansCN-Normal, SourceHanSansCN;
+                  font-weight: 400;
+                  color: rgba(255, 255, 255, 1);
+                  line-height: 15px;
+                  margin: 0;
+                  padding-top: 6px;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .bookmark_empty {
+        text-align: center;
+        img {
+          margin-top: 72px;
+          width: 100px;
+          height: 100px;
+        }
+        p {
+          margin: 0;
+          margin-top: 48px;
+          height: 22px;
+          font-size: 16px;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 1);
+          line-height: 22px;
+        }
+      }
     }
 
     // !底部按钮
