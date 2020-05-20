@@ -5,50 +5,56 @@
  * @Autor: CuiGang
  * @Date: 2020-05-15 15:54:46
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-18 20:22:17
+ * @LastEditTime: 2020-05-20 19:08:36
  -->
 <template>
-  <div class="read_page">
-    <div class="book_name">
-      The Reader View
-      Headline 64
+  <div class="read_page" :style="themeOption">
+    <!-- 排版计算区域-用户不可见 根据纵排版计算横排页数 -->
+    <div class="can_not_be_seen" ref="cnbs">
+      <div class="book_name">{{bookInfo.name}}</div>
+      <div class="book_author">{{bookInfo.author}}</div>
+      <div class="chapter_name">{{bookInfo.chapterName}}</div>
+      <div class="chapter_content" :style="contentStyle">{{bookInfo.content}}</div>
     </div>
 
-    <div class="book_author">Author’s Name</div>
-
-    <div class="chapter_name">Chapter Title 36</div>
-
-    <div class="chapter_content" @click="showToolMenue = true">
-      Book body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x heightBook body 28. Merriweather Sans is a low-contrast semi-condensed sans-serif text typeface family designed to be pleasant to read at very small sizes. Merriweather Sans is traditional in feeling despite the modern shapes it has adopted for screens.
-      Merriweather Sans is an evolving project and will be updated. As of now there are 8 styles: Light, Regular, Bold, and ExtraBold weights in Roman and Italic styles.
-      There is also Merriweather, a serif version which closely harmonizes with the weights and styles of this sans-serif family.
-      Designed by Eben Sorkin, Merriweather Sans features a large x height
+    <!-- 滚动阅读 -->
+    <div class="scroll_type" @click="showToolMenue = true" v-if="slideType == 0">
+      <div class="book_name">{{bookInfo.name}}</div>
+      <div class="book_author">{{bookInfo.author}}</div>
+      <div class="chapter_name">{{bookInfo.chapterName}}</div>
+      <div class="chapter_content" :style="contentStyle">{{bookInfo.content}}</div>
     </div>
-    <!-- 菜单1弹层 -->
-    <van-popup
-      class="menu1 mask"
-      v-model="showToolMenue"
-      position="bottom"
-      :style="{ height: '20%' }"
-    >
+
+    <!-- 横屏轮播阅读 -->
+    <div class="slide_type" @click="showToolMenue = true" v-if="slideType == 1">
+      <van-swipe
+        class="my-swipe"
+        :loop="false"
+        :show-indicators="false"
+        :touchable="true"
+        :stop-propagation="true"
+        indicator-color="white"
+      >
+        <van-swipe-item v-for="(item , index) in slidePageNum" :key="index">
+          <div
+            class="slide_container"
+            :style="{
+            marginTop: index==0? -index*winHeight + 'px':-index*winHeight+40 + 'px' ,
+            height: winHeight+'px',
+            overFlow:'hidden',
+          }"
+          >
+            <div class="book_name">{{bookInfo.name}}</div>
+            <div class="book_author">{{bookInfo.author}}</div>
+            <div class="chapter_name">{{bookInfo.chapterName}}</div>
+            <div class="chapter_content" :style="contentStyle">{{bookInfo.content}}</div>
+          </div>
+        </van-swipe-item>
+      </van-swipe>
+    </div>
+
+    <!-- 基础菜单弹层 -->
+    <van-popup class="menu1 mask" v-model="showToolMenue" position="bottom">
       <div class="percent">
         <!-- 控制条 -->
         <p class="title">{{readPercent.toFixed(2) + '%'}}</p>
@@ -70,7 +76,12 @@
             src="../../assets/images/icon_slices/icon_libary.png"
             alt
           />
-          <img class="menu_item" src="../../assets/images/icon_slices/icon_font.png" alt />
+          <img
+            @click.self="handleClickTheme"
+            class="menu_item"
+            src="../../assets/images/icon_slices/icon_font.png"
+            alt
+          />
           <img class="menu_item" src="../../assets/images/icon_slices/icon_reader_dark.png" alt />
           <img class="menu_item" src="../../assets/images/icon_slices/icon_reader_reply.png" alt />
         </div>
@@ -79,7 +90,7 @@
       <div class="tools"></div>
     </van-popup>
 
-    <!-- 菜单2弹层 -->
+    <!-- 章节列表和书签弹层 -->
     <van-popup
       :class="['chapter_mask' , 'mask_radius' , {'default_color' : true}]"
       v-model="showChapterMenue"
@@ -115,7 +126,6 @@
 
       <!-- 展示---书籍信息 -->
       <div class="bookmark" v-show="!showChapterList">
-
         <!-- 有标签时 -->
         <ul class="chapter_list">
           <li class="chapter_item" v-for="(item, index) in bookMarkList" :key="index">
@@ -181,9 +191,63 @@
           <span></span>
         </div>
       </div>
-
     </van-popup>
 
+    <!-- 字体主题弹层 -->
+    <van-popup :class="['theme_mask' , 'mask_radius' ]" v-model="showThemeMenu" position="bottom">
+      <!-- 日光条??? 实现不来, 控制不了客户端的屏幕亮度,原生可以-->
+      <!-- <div class="light_bar">
+        <img class="light_more" src="../../assets/images/icon_slices/icon_light_less.png" alt />
+        <div class="bar">
+          <van-slider v-model="lightPercent" bar-height="4px" active-color="#ee0a24" />
+        </div>
+        <img class="light_less" src="../../assets/images/icon_slices/icon_light_more.png" alt />
+      </div>-->
+
+      <!-- 字体条 -->
+      <div class="font_bar">
+        <div class="font_bg">
+          <span :class="['white' , {active:themeType == 0}]" @click.self="themeType = 0">T</span>
+          <span :class="['yellow' , {active:themeType == 1}]" @click.self="themeType = 1">T</span>
+          <span :class="['black' , {active:themeType == 2}]" @click.self="themeType = 2">T</span>
+        </div>
+        <div class="font_sz">
+          <img
+            class="a1"
+            src="../../assets/images/icon_slices/icon_a-.png"
+            alt
+            @click.self="handleReduceFontSize"
+          />
+          {{fontSize}}
+          <img
+            class="a2"
+            src="../../assets/images/icon_slices/icon_a+.png"
+            alt
+            @click.self="handleRiseFontSize"
+          />
+        </div>
+      </div>
+
+      <!-- 行高,翻页条 -->
+      <div class="font_lh">
+        <div class="page_lh">
+          <span :class="[{active:baseLineHeight == 1}]" @click.self="baseLineHeight = 1"></span>
+          <span :class="[{active:baseLineHeight == 1.2}]" @click.self="baseLineHeight = 1.2"></span>
+          <span :class="[{active:baseLineHeight == 1.4}]" @click.self="baseLineHeight = 1.4"></span>
+        </div>
+        <div class="page_slide">
+          <span :class="['slide' , {active:slideType == 0}]" @click.self="slideType = 0">Slide</span>
+          <span :class="['scroll' , {active: slideType == 1}]" @click.self="slideType = 1">Scroll</span>
+        </div>
+      </div>
+
+      <!-- 字体类型条 -->
+      <div class="font_fam_bar">
+        <van-tabs :ellipsis="false" type="card" @change="handleChoseFontFamily">
+          <van-tab v-for="(item,index) in fontFamilyOption" :title="item.name" :key="index"></van-tab>
+        </van-tabs>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -193,19 +257,47 @@ export default {
   name: "ReadPage",
   data() {
     return {
+      bookInfo: {
+        content:
+          "and pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mumand pls let them do an DNa test and pls dont make the female lead so embarrassing if she really love this guy pls tell him everything so his child kan have an mum",
+        name: "The Reader View Headline 64",
+        author: "Author’s Name",
+        chapterName: "Chapter Title 36"
+      },
+      contentStyle: {},
+      slideType: 1, // 阅读方式: 0 scroll ; 1 slide
+      winHeight: 0, // 屏幕浏览器显示区高度
+      slidePageNum: 0, // 横屏滚动页面数量
       showToolMenue: false, // 基本工具菜单弹窗
       showChapterMenue: false, // 章节列表菜单弹窗
-      showChapterList: true, // 显示列表
+      showChapterList: true, // 显示列表--默认展示章节
+      showThemeMenu: false, // 主题弹窗
       readPercent: 0, // 当前阅读百分比
-      styleOption: {
-        // 样式配置对象
-        pageBg: [
-          "rgba(251, 253, 255, 1)",
-          "rgba(0, 0, 0, 1)",
-          "rgba(254, 238, 210, 1)"
-        ]
-      },
-
+      lightPercent: 0, // 亮度百分比
+      fontSize: 18, // 默认字号
+      baseLineHeight: 1, // 默认行高
+      themeType: 0, // 主题 0白 1黄 2黑
+      themeOption: {}, // 阅读页主题
+      fontColorOption: [
+        "rgba(51, 51, 51, 1)",
+        "rgba(68, 51, 34, 1)",
+        "rgba(255, 255, 255, 1)"
+      ],
+      backgroundOption: [
+        "rgba(251, 253, 255, 1)",
+        "rgba(254, 238, 210, 1)",
+        "rgba(0, 0, 0, 1)"
+      ],
+      // 字体类型滑块
+      ffName: "Merriweather-Bold", // 默认字体类型
+      fontFamilyOption: [
+        { name: "Vollkorn,serif", id: 0 },
+        { name: "Merriweather-Bold, Merriweather", id: 0 },
+        { name: "Roboto Slab", id: 0 },
+        { name: "Merriweather", id: 0 },
+        { name: "Roboto Slab", id: 0 }
+      ],
+      // 章节列表
       chapterList: [
         {
           name:
@@ -214,7 +306,7 @@ export default {
           id: 0
         }
       ],
-
+      // 书签列表
       bookMarkList: [
         {
           name: "Cp1. Chapter titleCp1. ",
@@ -252,14 +344,33 @@ export default {
   components: {
     ProgressBar
   },
-  created() {
-    let bookId = this.$route.params.bookid;
-  },
   methods: {
     // ? 点击展示章节列表
     handleClickShowChpter() {
-      this.showToolMenue = false; // 隐藏菜单1
+      this.closeAllMask();
       this.showChapterMenue = true; // 展示章节列表菜单
+    },
+
+    // ? 点击主题按钮
+    handleClickTheme() {
+      this.closeAllMask();
+      this.showThemeMenu = true;
+    },
+
+    // ?修改字体大小
+    handleReduceFontSize() {
+      if (this.fontSize <= 14) return;
+      this.fontSize -= 1;
+    },
+    handleRiseFontSize() {
+      if (this.fontSize >= 28) return;
+      this.fontSize += 1;
+    },
+
+    // ?修改字体类型
+    handleChoseFontFamily(ffIndex, ffName) {
+      this.themeOption.fontFamily = ffName;
+      this.$forceUpdate();
     },
 
     // ? 进度条控件阅读进度控制
@@ -270,6 +381,63 @@ export default {
     // ? 删除书签
     delBookMark(id) {
       console.log(id);
+    },
+
+    // ?关闭所有弹窗
+    closeAllMask() {
+      this.showToolMenue = false;
+      this.showChapterMenue = false;
+      this.showChapterList = false;
+      this.showThemeMenu = false;
+    },
+
+    // !横版翻页获取页数
+    getSlidePageNumber() {
+      let cnbsHeight = this.$refs.cnbs.offsetHeight;
+      let winHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight;
+      this.winHeight = winHeight;
+      this.slidePageNum = Math.ceil(cnbsHeight / winHeight);
+      console.log(this.slidePageNum);
+    }
+  },
+  created() {
+    let bookId = this.$route.params.bookid;
+
+    this.themeOption = {
+      color: this.fontColorOption[this.themeType],
+      background: this.backgroundOption[this.themeType],
+      fontFamily: this.ffName
+    };
+  },
+  mounted() {
+    // 计算横版页码
+    this.getSlidePageNumber();
+  },
+  watch: {
+    themeType(v2, v1) {
+      this.themeOption = {
+        color: this.fontColorOption[v2],
+        background: this.backgroundOption[v2]
+      };
+      this.$forceUpdate();
+    },
+    //! 行高和字号改变,重算横版页数
+    baseLineHeight(v2, v1) {
+      this.getSlidePageNumber();
+      this.contentStyle = {
+        fontSize: this.fontSize + "px",
+        lineHeight: this.fontSize * 1.8 * this.baseLineHeight + "px"
+      };
+    },
+    fontSize(v2, v1) {
+      this.getSlidePageNumber();
+      this.contentStyle = {
+        fontSize: this.fontSize + "px",
+        lineHeight: this.fontSize * 1.8 * this.baseLineHeight + "px"
+      };
     }
   }
 };
@@ -292,20 +460,17 @@ export default {
 
 .read_page {
   box-sizing: border-box;
-  padding: 44px 30px;
   font-family: Merriweather-Bold, Merriweather;
 
   .book_name {
     font-size: 32px;
     font-weight: bold;
-    color: rgba(17, 17, 17, 1);
     line-height: 40px;
     margin-bottom: 12px;
   }
   .book_author {
     font-size: 14px;
     font-weight: normal;
-    color: rgba(102, 102, 102, 1);
     line-height: 18px;
     margin-bottom: 36px;
   }
@@ -319,10 +484,17 @@ export default {
 
   .chapter_content {
     font-size: 14px;
-    font-weight: 400;
-    color: rgba(51, 51, 51, 1);
     line-height: 25px;
+    font-weight: 400;
     text-align: justify !important;
+  }
+
+  .default_color {
+    color: rgba(255, 255, 255, 1);
+  }
+
+  .active_color {
+    color: rgba(238, 40, 102, 1);
   }
 
   // !弹出层1
@@ -360,14 +532,6 @@ export default {
         }
       }
     }
-  }
-
-  .default_color {
-    color: rgba(255, 255, 255, 1);
-  }
-
-  .active_color {
-    color: rgba(238, 40, 102, 1);
   }
 
   // !弹出层2
@@ -526,7 +690,7 @@ export default {
 
     // !底部按钮
     .footer {
-      position: absolute;
+      position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
@@ -558,6 +722,257 @@ export default {
         }
       }
     }
+  }
+
+  // !主题弹层
+  .theme_mask {
+    padding: 8px 16px 0;
+    box-sizing: border-box;
+
+    // 亮度调节
+    .light_bar {
+      height: 60px;
+      img {
+        width: 24px;
+        height: 24px;
+        vertical-align: middle;
+        float: left;
+        margin: 18px 10px;
+        &:first-child {
+          margin-left: 0px;
+        }
+        &:last-child {
+          margin-right: 0px;
+        }
+      }
+      .bar {
+        margin: 0;
+        padding: 0;
+        padding-top: 28px;
+        width: 272px;
+        vertical-align: middle;
+        float: left;
+        .van-slider__button {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    // 字体调节
+    .font_bar {
+      height: 60px;
+      overflow: hidden;
+      box-sizing: border-box;
+      div {
+        width: 50%;
+        height: 60px;
+        float: left;
+        box-sizing: border-box;
+      }
+      .font_bg {
+        overflow: hidden;
+        padding-top: 12px;
+        span {
+          box-sizing: border-box;
+          float: left;
+          width: 36px;
+          height: 36px;
+          line-height: 36px;
+          text-align: center;
+          font-size: 16px;
+          font-weight: bold;
+          border-radius: 50%;
+          background: rgba(251, 253, 255, 1);
+          margin-right: 24px;
+          &:last-child {
+            margin: 0;
+          }
+        }
+        span.active {
+          border: 2px solid rgba(238, 40, 102, 1);
+          color: rgba(238, 40, 102, 1);
+        }
+        span.white {
+          background-color: #fff;
+          color: #000;
+        }
+        span.yellow {
+          background: rgba(254, 238, 210, 1);
+          color: #000;
+        }
+        span.black {
+          background-color: #000;
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+      .font_sz {
+        height: 48px;
+        background: rgba(0, 0, 0, 1);
+        border-radius: 22px;
+        margin: 6px 0;
+        padding: 0 16px;
+        padding-top: 12px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 1);
+        line-height: 22px;
+        img {
+          width: 24px;
+          height: 24px;
+        }
+        img.a1 {
+          float: left;
+        }
+        img.a2 {
+          float: right;
+        }
+      }
+    }
+
+    // 行高,翻页方式
+    .font_lh {
+      box-sizing: border-box;
+      height: 60px;
+      overflow: hidden;
+      div {
+        float: left;
+        width: 50%;
+        padding-top: 12px;
+      }
+      .page_lh {
+        span {
+          float: left;
+          width: 36px;
+          height: 36px;
+          background-color: aqua;
+          margin-right: 24px;
+          &:first-child {
+            background: url("../../assets/images/icon_slices/icon_lh3.png")
+              no-repeat;
+            background-position: center center;
+            background-size: 24px 24px;
+            &.active {
+              background: url("../../assets/images/icon_slices/icon_lh3_active.png")
+                no-repeat;
+              background-position: center center;
+              background-size: 24px 24px;
+            }
+          }
+          &:nth-child(2) {
+            background: url("../../assets/images/icon_slices/icon_lh1.png")
+              no-repeat;
+            background-position: center center;
+            background-size: 24px 24px;
+            &.active {
+              background: url("../../assets/images/icon_slices/icon_lh1_active.png")
+                no-repeat;
+              background-position: center center;
+              background-size: 24px 24px;
+            }
+          }
+          &:last-child {
+            margin-right: 0;
+            background: url("../../assets/images/icon_slices/icon_lh2.png")
+              no-repeat;
+            background-position: center center;
+            background-size: 24px 24px;
+            &.active {
+              background: url("../../assets/images/icon_slices/icon_lh2_active.png")
+                no-repeat;
+              background-position: center center;
+              background-size: 24px 24px;
+            }
+          }
+          &.active {
+            border-radius: 50%;
+            border: 2px solid rgba(238, 40, 102, 1);
+          }
+        }
+      }
+      .page_slide {
+        overflow: hidden;
+        span {
+          float: right;
+          width: 62px;
+          height: 36px;
+          border-radius: 22px;
+          background: rgba(0, 0, 0, 0.5);
+          font-size: 13px;
+          font-weight: 500;
+          color: rgba(255, 255, 255, 1);
+          text-align: center;
+          line-height: 36px;
+          &:first-child {
+            float: left;
+            margin-left: 24px;
+          }
+        }
+        span.active {
+          color: rgba(238, 40, 102, 1);
+          border: 2px solid rgba(238, 40, 102, 1);
+        }
+      }
+    }
+
+    // 字体类型调节
+    .font_fam_bar {
+      height: 60px;
+      padding-top: 18px;
+      box-sizing: border-box;
+      /deep/ .van-tabs {
+        padding-left: 0;
+        padding-right: 0;
+        .van-tabs__wrap {
+          height: 36px;
+        }
+        .van-tabs__nav--card {
+          margin: 0;
+          border: none;
+          height: 36px;
+          background: rgba(34, 34, 34, 1);
+        }
+        .van-tab {
+          padding: 0 6px;
+          height: 32px;
+          line-height: 32px;
+          border-radius: 22px;
+          border-right: none;
+          margin-right: 12px;
+          background-color: rgba(0, 0, 0, 1);
+          &.active {
+            border: 2px solid rgba(238, 40, 102, 1);
+            span {
+              color: rgba(238, 40, 102, 1);
+            }
+          }
+          span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 1);
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+
+  // !排版用区域
+  .can_not_be_seen {
+    position: fixed;
+    z-index: -9999;
+    background-color: red;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+  }
+
+  // !横版单个容器
+  .slide_container,
+  .scroll_type,
+  .can_not_be_seens {
+    box-sizing: border-box;
+    padding: 44px 30px;
   }
 }
 </style>

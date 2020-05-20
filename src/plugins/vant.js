@@ -5,11 +5,11 @@
  * @Autor: CuiGang
  * @Date: 2020-05-11 17:47:56
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-18 19:14:21
+ * @LastEditTime: 2020-05-18 20:37:15
  */
 import Vue from 'vue'
 import { CheckboxGroup, Popup, Field, Divider, ShareSheet, Lazyload, Swipe, SwipeItem, Toast, Icon, Search, Tab, Tabs, Grid, GridItem, Loading, Pagination, Checkbox } from 'vant'
-import { Tabbar, TabbarItem, Progress, SwipeCell, Card, Button } from "vant";
+import { Tabbar, TabbarItem, Progress, SwipeCell, Card, Button, Slider } from "vant";
 Vue.use(Tabbar);
 Vue.use(TabbarItem);
 Vue.use(Toast);
@@ -37,3 +37,4 @@ Vue.use(Progress);
 Vue.use(SwipeCell);
 Vue.use(Card);
 Vue.use(Button);
+Vue.use(Slider);
