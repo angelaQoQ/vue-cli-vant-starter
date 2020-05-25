@@ -5,16 +5,16 @@
  * @Autor: CuiGang
  * @Date: 2020-05-15 15:54:46
  * @LastEditors: CuiGang
- * @LastEditTime: 2020-05-20 19:08:36
+ * @LastEditTime: 2020-05-25 17:45:09
  -->
 <template>
   <div class="read_page" :style="themeOption">
     <!-- 排版计算区域-用户不可见 根据纵排版计算横排页数 -->
     <div class="can_not_be_seen" ref="cnbs">
-      <div class="book_name">{{bookInfo.name}}</div>
-      <div class="book_author">{{bookInfo.author}}</div>
-      <div class="chapter_name">{{bookInfo.chapterName}}</div>
-      <div class="chapter_content" :style="contentStyle">{{bookInfo.content}}</div>
+      <div class="book_name" ref="cnbs0">{{bookInfo.name}}</div>
+      <div class="book_author" ref="cnbs1">{{bookInfo.author}}</div>
+      <div class="chapter_name" ref="cnbs2">{{bookInfo.chapterName}}</div>
+      <div class="chapter_content" ref="cnbs3" :style="contentStyle">{{bookInfo.content}}</div>
     </div>
 
     <!-- 滚动阅读 -->
@@ -27,6 +27,8 @@
 
     <!-- 横屏轮播阅读 -->
     <div class="slide_type" @click="showToolMenue = true" v-if="slideType == 1">
+      <!-- 顶部章节名 -->
+      <div class="slide_chapter_name icon" :style="themeOption" ref="topIcon">{{bookInfo.name}}</div>
       <van-swipe
         class="my-swipe"
         :loop="false"
@@ -34,12 +36,13 @@
         :touchable="true"
         :stop-propagation="true"
         indicator-color="white"
+        @change="slideChapter"
       >
         <van-swipe-item v-for="(item , index) in slidePageNum" :key="index">
           <div
             class="slide_container"
             :style="{
-            marginTop: index==0? -index*winHeight + 'px':-index*winHeight+40 + 'px' ,
+            marginTop: -index*seenHeight + 'px' ,
             height: winHeight+'px',
             overFlow:'hidden',
           }"
@@ -51,6 +54,11 @@
           </div>
         </van-swipe-item>
       </van-swipe>
+      <!-- 底部页码 -->
+      <div
+        class="slide_page_num icon"
+        :style="themeOption"
+      >{{ currentPageNum + '/' + slidePageNum }}</div>
     </div>
 
     <!-- 基础菜单弹层 -->
@@ -207,9 +215,9 @@
       <!-- 字体条 -->
       <div class="font_bar">
         <div class="font_bg">
-          <span :class="['white' , {active:themeType == 0}]" @click.self="themeType = 0">T</span>
-          <span :class="['yellow' , {active:themeType == 1}]" @click.self="themeType = 1">T</span>
-          <span :class="['black' , {active:themeType == 2}]" @click.self="themeType = 2">T</span>
+          <span :class="['white' , {active:themeType == 0}]" @click.self="handleThemeType(0)">T</span>
+          <span :class="['yellow' , {active:themeType == 1}]" @click.self="handleThemeType(1)">T</span>
+          <span :class="['black' , {active:themeType == 2}]" @click.self="handleThemeType(2)">T</span>
         </div>
         <div class="font_sz">
           <img
@@ -231,13 +239,13 @@
       <!-- 行高,翻页条 -->
       <div class="font_lh">
         <div class="page_lh">
-          <span :class="[{active:baseLineHeight == 1}]" @click.self="baseLineHeight = 1"></span>
-          <span :class="[{active:baseLineHeight == 1.2}]" @click.self="baseLineHeight = 1.2"></span>
-          <span :class="[{active:baseLineHeight == 1.4}]" @click.self="baseLineHeight = 1.4"></span>
+          <span :class="[{active:baseLineHeight == 1}]" @click.self="handleLineHeight(1)"></span>
+          <span :class="[{active:baseLineHeight == 1.2}]" @click.self="handleLineHeight(1.2)"></span>
+          <span :class="[{active:baseLineHeight == 1.4}]" @click.self="handleLineHeight(1.4)"></span>
         </div>
         <div class="page_slide">
-          <span :class="['slide' , {active:slideType == 0}]" @click.self="slideType = 0">Slide</span>
-          <span :class="['scroll' , {active: slideType == 1}]" @click.self="slideType = 1">Scroll</span>
+          <span :class="['slide' , {active:slideType == 0}]" @click.self="handleSlideType(0)">Slide</span>
+          <span :class="['scroll' , {active: slideType == 1}]" @click.self="handleSlideType(1)">Scroll</span>
         </div>
       </div>
 
@@ -267,6 +275,8 @@ export default {
       contentStyle: {},
       slideType: 1, // 阅读方式: 0 scroll ; 1 slide
       winHeight: 0, // 屏幕浏览器显示区高度
+      seenHeight: 0, // 横屏每个slider上移的单位  浏览器显示区域高度- slide_chapter_name高 - slide_page_num高
+      currentPageNum: 1, // 当前页码
       slidePageNum: 0, // 横屏滚动页面数量
       showToolMenue: false, // 基本工具菜单弹窗
       showChapterMenue: false, // 章节列表菜单弹窗
@@ -357,20 +367,42 @@ export default {
       this.showThemeMenu = true;
     },
 
+    // ?修改主题
+    handleThemeType(type){
+      this.themeType = type;
+      this.setUserHoby();
+    },
+
     // ?修改字体大小
     handleReduceFontSize() {
       if (this.fontSize <= 14) return;
       this.fontSize -= 1;
+      this.setUserHoby();
     },
     handleRiseFontSize() {
       if (this.fontSize >= 28) return;
       this.fontSize += 1;
+      this.setUserHoby();
     },
 
     // ?修改字体类型
     handleChoseFontFamily(ffIndex, ffName) {
+      this.ffName = ffName;
       this.themeOption.fontFamily = ffName;
+      this.setUserHoby();
       this.$forceUpdate();
+    },
+
+    // ?处理行高
+    handleLineHeight(lh) {
+      this.baseLineHeight = lh;
+      this.setUserHoby();
+    },
+
+    // ?处理横竖阅读
+    handleSlideType(type){
+      this.slideType = type;
+      this.setUserHoby();
     },
 
     // ? 进度条控件阅读进度控制
@@ -391,26 +423,81 @@ export default {
       this.showThemeMenu = false;
     },
 
+    // ?横向切换内容
+    slideChapter(index) {
+      this.currentPageNum = index + 1;
+    },
+
     // !横版翻页获取页数
     getSlidePageNumber() {
-      let cnbsHeight = this.$refs.cnbs.offsetHeight;
+      let iconsHeight = this.$refs.topIcon.offsetHeight * 2;
+      let cnbsHeight =
+        this.$refs.cnbs0.clientHeight +
+        this.$refs.cnbs1.clientHeight +
+        this.$refs.cnbs2.clientHeight +
+        this.$refs.cnbs3.clientHeight; // innerHeight
       let winHeight =
         window.innerHeight ||
         document.documentElement.clientHeight ||
         document.body.clientHeight;
+      this.seenHeight = winHeight - iconsHeight - 14;
       this.winHeight = winHeight;
-      this.slidePageNum = Math.ceil(cnbsHeight / winHeight);
+      this.slidePageNum = Math.ceil(cnbsHeight / this.seenHeight);
       console.log(this.slidePageNum);
+    },
+
+    //! 获取用户偏好设置,初始化阅读器
+    getUserHoby() {
+      let userHoby = this.userHoby;
+
+      if (window.localStorage.userHoby) {
+        userHoby = JSON.parse(window.localStorage.userHoby);
+      } else {
+        (userHoby = {
+          fontSize: 18,
+          baseLineHeight: 1,
+          themeType: 0,
+          ffName: "Merriweather-Bold",
+          fontWeight: 400
+        }),
+          window.localStorage.setItem("userHoby", JSON.stringify(userHoby));
+      }
+
+      this.themeOption = {
+        color: this.fontColorOption[userHoby.themeType],
+        background: this.backgroundOption[userHoby.themeType],
+        fontFamily: userHoby.ffName
+      };
+
+      this.fontSize = userHoby.fontSize;
+      this.baseLineHeight = userHoby.baseLineHeight;
+      this.contentStyle.fontSize = this.fontSize + "px";
+      this.contentStyle.lineHeight = this.fontSize * 1.8 * 1 + "px";
+      this.contentStyle.fontWeight = userHoby.fontWeight;
+
+      this.$forceUpdate();
+    },
+
+    //! 更新用户偏好设置
+    setUserHoby() {
+      let that = this;
+      window.localStorage.setItem(
+        "userHoby",
+        JSON.stringify({
+          fontSize: that.fontSize,
+          themeType: that.themeType,
+          ffName: that.ffName,
+          baseLineHeight: that.baseLineHeight,
+          slideType:that.slideType,
+          fontWeight: 400,
+        })
+      );
     }
   },
   created() {
     let bookId = this.$route.params.bookid;
 
-    this.themeOption = {
-      color: this.fontColorOption[this.themeType],
-      background: this.backgroundOption[this.themeType],
-      fontFamily: this.ffName
-    };
+    this.getUserHoby();
   },
   mounted() {
     // 计算横版页码
@@ -483,9 +570,9 @@ export default {
   }
 
   .chapter_content {
-    font-size: 14px;
-    line-height: 25px;
-    font-weight: 400;
+    // font-size: 14px;
+    // line-height: 25px;
+    // font-weight: 400;
     text-align: justify !important;
   }
 
@@ -970,9 +1057,30 @@ export default {
   // !横版单个容器
   .slide_container,
   .scroll_type,
-  .can_not_be_seens {
+  .can_not_be_seen {
     box-sizing: border-box;
     padding: 44px 30px;
+  }
+
+  .slide_type {
+    position: relative;
+    .icon {
+      box-sizing: border-box;
+      position: absolute;
+      width: 100%;
+      height: 30px;
+      line-height: 30px;
+      overflow: hidden;
+      z-index: 2;
+      padding: 0 30px;
+    }
+    .slide_chapter_name {
+      top: 0;
+    }
+    .slide_page_num {
+      bottom: 0;
+      text-align: right;
+    }
   }
 }
 </style>
